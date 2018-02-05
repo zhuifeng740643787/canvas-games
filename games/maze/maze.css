@@ -14,22 +14,14 @@ body {
     width: 100vw;
     height: 100vh;
     display: flex;
-    align-items: center;
     justify-content: center;
-}
-
-.main {
-    position: relative;
-    width: 90vw;
-    height: 90vh;
+    align-items: center;
+    padding: 10px 0;
 }
 
 .canvas {
     background-color: #ffffff;
     display: none;
-    position: absolute;
-    left: 0;
-    top: 0;
 }
 
 .canvas.active {
