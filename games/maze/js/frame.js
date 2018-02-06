@@ -29,11 +29,19 @@ let Frame = function (canvasWidth, canvasHeight) {
     // 遍历绘制
     for (let i = 0; i < this.data.M; i++) {
       for (let j = 0; j < this.data.N; j++) {
-        if (this.data.isWall(this.data.maze[i][j])) {
-          this.ctx.fillStyle = '#0000ff'
-        } else {
-          this.ctx.fillStyle = '#ffffff'
+        let fillStyle = '#0000ff'
+        if (this.data.isRoad(this.data.maze[i][j])) {
+          fillStyle = '#ffffff'
         }
+        // 路径搜索时被访问过
+        if (this.data.searchVisited[i][j]) {
+          fillStyle = '#f0f000'
+        }
+        if (this.data.isPath[i][j]) {
+          fillStyle = '#ff0000'
+        }
+
+        this.ctx.fillStyle = fillStyle
         // 绘制方格
         this.ctx.fillRect(j * w, i * h, w, h)
       }

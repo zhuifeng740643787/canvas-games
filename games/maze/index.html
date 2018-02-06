@@ -2,20 +2,119 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Canvas练习</title>
-  <link rel="stylesheet" href="maze.css">
+  <title>迷宫</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/maze.css">
 </head>
 <body>
-
-<div class="container">
-  <canvas id="ui-layer" class="canvas active" width="800" height="800">
-    您的浏览器不支持canvas,请去升级浏览器。
-  </canvas>
+<header>
+  <h1>迷宫</h1>
+</header>
+<div class="container" id="app">
+  <!-- 画布区域 -->
+  <section class="canvas-wrapper">
+    <canvas id="ui-layer" class="canvas active" width="400" height="400">
+      您的浏览器不支持canvas,请去升级浏览器。
+    </canvas>
+  </section>
+  <!-- 操作区域 -->
+  <section class="option-wrapper">
+    <div class="option-card">
+      <header><h2>选项</h2></header>
+      <ul>
+        <li class="option-item">
+          <div class="option-left">
+            <span>迷宫尺寸</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.rowNum">
+              <span class="input-append">行</span>
+            </div>
+            <span class="input-split">X</span>
+            <div class="input-wrapper">
+              <input type="text" v-model="option.colNum">
+              <span class="input-append">列</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>墙的尺寸</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.wallSize">
+              <span class="input-append">px</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>路的尺寸</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.roadSize">
+              <span class="input-append">px</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>延迟毫秒数</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.delay">
+              <span class="input-append">毫秒</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>迷宫生成算法</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+            <select v-model="option.makeMethod">
+              <option value="1">深度优先遍历-递归</option>
+              <option value="2">深度优先遍历-非递归</option>
+              <option value="3">广度优先遍历</option>
+              <option value="4">随机队列</option>
+              <option value="5">深度+广度</option>
+            </select>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>迷宫寻路算法</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <select v-model="option.findPathMethod">
+                <option value="1">深度优先遍历-递归</option>
+                <option value="2">深度优先遍历-非递归</option>
+                <option value="3">广度优先遍历</option>
+              </select>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-buttons">
+            <button :disabled="!canMake" :class='{"button": true, "active": canMake}' @click="handleMakeMaze">生成迷宫</button>
+            <button :disabled="!canFindPath" :class='{"button": true, "active": canFindPath}' @click="handleFindPath">走迷宫</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
 </div>
-
-<script type="text/javascript" src="maze-data.js"></script>
-<script type="text/javascript" src="frame.js"></script>
-<script type="text/javascript" src="controller.js"></script>
-<script type="text/javascript" src="maze.js"></script>
+<script type="text/javascript" src="js/maze-data.js"></script>
+<script type="text/javascript" src="js/frame.js"></script>
+<script type="text/javascript" src="js/controller.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue" defer></script>
+<script type="text/javascript" src="js/maze.js" defer></script>
 </body>
 </html>

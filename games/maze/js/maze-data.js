@@ -22,10 +22,14 @@ let MazeData = function (M, N) {
   this.exitY = this.N - 1 // 出口Y索引
   this.maze = new Array() // 墙和路的数据
   this.visited = new Array() // 是否被访问过
+  this.searchVisited = new Array() // 是否在查找路径时被访问过
+  this.isPath = new Array() // 是否为路径
   // 初始化数据,最外层的四周都是墙（除入口和出口外）
   for (let i = 0; i < this.M; i++) {
     this.maze[i] = new Array()
     this.visited[i] = new Array()
+    this.searchVisited[i] = new Array()
+    this.isPath[i] = new Array()
     for (let j = 0; j < this.N; j++) {
       // 设置路和墙
       if (i % 2 == 1 && j % 2 == 1) {
@@ -35,19 +39,26 @@ let MazeData = function (M, N) {
       }
       // 初始化都未被访问过
       this.visited[i][j] = false
+      this.searchVisited[i][j] = false
+      this.isPath[i][j] = false
     }
   }
   this.maze[this.entryX][this.entryY] = ROAD
   this.maze[this.exitX][this.exitY] = ROAD
   this.visited[this.entryX][this.entryY] = true
   this.visited[this.exitX][this.exitY] = true
+  this.isPath[this.entryX][this.entryY] = true
+  this.isPath[this.exitX][this.exitY] = true
 
+  // 克隆数据
   this.clone = () => {
     let d = new MazeData(this.M, this.N)
     for (let i = 0; i < this.M; i++) {
       for (let j = 0; j < this.M; j++) {
         d.maze[i][j] = this.maze[i][j]
         d.visited[i][j] = this.visited[i][j]
+        d.searchVisited[i][j] = this.searchVisited[i][j]
+        d.isPath[i][j] = this.isPath[i][j]
       }
     }
     return d
@@ -69,9 +80,17 @@ let MazeData = function (M, N) {
     this.visited[x][y] = true
   }
 
+  this.setSearchVisited = (x, y) => {
+    if (!this.inArea(x, y)) {
+
+      throw new Error('索引越界')
+    }
+    this.searchVisited[x][y] = true
+  }
+
   // 是否在区域内
   this.inArea = (x, y) => {
-    return x >= 0 && x < this.N && y >= 0 && y < this.M
+    return x >= 0 && x < this.M && y >= 0 && y < this.N
   }
 
   // 是否为墙
@@ -81,6 +100,18 @@ let MazeData = function (M, N) {
   // 是否为路
   this.isRoad = (d) => {
     return d === ROAD
+  }
+
+  // 清空路径
+  this.clearPath = () => {
+    for (let i = 0; i < this.M; i++) {
+      for (let j = 0; j < this.N; j++) {
+        this.searchVisited[i][j] = false
+        this.isPath[i][j] = false
+      }
+    }
+    this.isPath[this.entryX][this.entryY] = true
+    this.isPath[this.exitX][this.exitY] = true
   }
 
 }
