@@ -1,0 +1,149 @@
+body {
+  background: url("../images/bg.jpeg") no-repeat;
+  background-size: cover;
+}
+
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+@media screen and (max-width: 800px) {
+  .container {
+    flex-direction: column;
+  }
+}
+
+.canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  border: 3px solid #000;
+  border-radius: 10px;
+}
+
+.canvas {
+  background-color: #ffffff;
+  display: none;
+}
+
+.canvas.active {
+  display: block;
+}
+
+#background-layer {
+  z-index: 1;
+}
+
+#ui-layer {
+  z-index: 100;
+}
+
+.option-wrapper {
+  margin: 20px;
+  border: 1px solid #cccccc;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.5)
+}
+.option-card header {
+  border-bottom: 1px solid #cccccc;
+  margin-bottom: 10px;
+}
+
+.option-card header h2 {
+  font-size: 18px;
+  color: #000;
+  font-weight: 400;
+  line-height: 2;
+}
+
+.option-card .option-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.option-item .option-left {
+  margin-right: 10px;
+  min-width: 100px;
+}
+
+.option-item .option-right {
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper {
+  display: flex;
+  background-color: #cccccc;
+  border-radius: 5px;
+  height: 26px;
+  line-height: 26px;
+  color: #495060;
+}
+.input-wrapper input[type=text] {
+  flex: 1;
+  max-width: 50px;
+  background-color: #fff;
+  padding-left: 5px;
+  padding-right: 5px;
+  border: none;
+}
+.input-wrapper .input-append{
+  min-width: 25px;
+  padding: 0 5px;
+}
+.input-split {
+  margin: 0 10px;
+}
+
+.option-buttons {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-top: 1px solid #cccccc;
+}
+.button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  margin-right: 10px;
+  font-size: 14px;
+  font-weight: 300;
+}
+.button.active {
+  background-color: #0000ff;
+  color: #ffffff;
+}
+
+.tip-modal {
+  position: fixed;
+  top: -300px;
+  left: 40%;
+  width: 20%;
+  background-color: #ff00ff;
+  opacity: 0;
+  z-index: 100;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  transition: all 0.5s linear;
+}
+.tip-modal.show {
+  top: 45%;
+  opacity: 0.8;
+}
+
+.tip-modal .content {
+  font-size: 18px;
+  font-weight: 500;
+}

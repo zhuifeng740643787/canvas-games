@@ -2,28 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>迷宫</title>
+  <title>扫雷游戏</title>
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-<header>
-</header>
 <div class="container" id="app">
   <!-- 画布区域 -->
   <section class="canvas-wrapper">
-    <canvas id="ui-layer" class="canvas active" width="400" height="400">
+    <canvas id="ui-layer" class="canvas active" width="500" height="500">
       您的浏览器不支持canvas,请去升级浏览器。
     </canvas>
   </section>
   <!-- 操作区域 -->
-  <section class="option-wrapper">
+  <section class="option-wrapper" >
     <div class="option-card">
       <header><h2>选项</h2></header>
       <ul>
         <li class="option-item">
           <div class="option-left">
-            <span>迷宫尺寸</span>
+            <span>雷区尺寸</span>
           </div>
           <div class="option-right">
             <div class="input-wrapper">
@@ -39,6 +37,17 @@
         </li>
         <li class="option-item">
           <div class="option-left">
+            <span>雷的个数</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.mineNum">
+              <span class="input-append">个</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
             <span>方格尺寸</span>
           </div>
           <div class="option-right">
@@ -49,57 +58,42 @@
           </div>
         </li>
         <li class="option-item">
-          <div class="option-left">
-            <span>延迟毫秒数</span>
-          </div>
-          <div class="option-right">
-            <div class="input-wrapper">
-              <input type="text" v-model="option.delay">
-              <span class="input-append">毫秒</span>
-            </div>
-          </div>
-        </li>
-        <li class="option-item">
-          <div class="option-left">
-            <span>迷宫生成算法</span>
-          </div>
-          <div class="option-right">
-            <div class="input-wrapper">
-            <select v-model="option.makeMethod">
-              <option value="1">深度优先遍历-递归</option>
-              <option value="2">深度优先遍历-非递归</option>
-              <option value="3">广度优先遍历</option>
-              <option value="4">随机队列</option>
-              <option value="5">深度+广度</option>
-            </select>
-            </div>
-          </div>
-        </li>
-        <li class="option-item">
-          <div class="option-left">
-            <span>迷宫寻路算法</span>
-          </div>
-          <div class="option-right">
-            <div class="input-wrapper">
-              <select v-model="option.findPathMethod">
-                <option value="1">深度优先遍历-递归</option>
-                <option value="2">深度优先遍历-非递归</option>
-                <option value="3">广度优先遍历</option>
-              </select>
-            </div>
-          </div>
-        </li>
-        <li class="option-item">
           <div class="option-buttons">
             <button :disabled="!canMake" :class='{"button": true, "active": canMake}' @click="handleMakeMaze">
-              {{controller ? '重新生成' : '生成迷宫' }}
+              {{controller ? '重新生成' : '生成雷区' }}
             </button>
-            <button :disabled="!canFindPath" :class='{"button": true, "active": canFindPath}' @click="handleFindPath">走迷宫</button>
+            <button :disabled="!canPlay" :class='{"button": true, "active": canPlay}' @click="handlePlay">
+              {{controller ? '重玩' : '开始游戏' }}
+            </button>
           </div>
         </li>
       </ul>
     </div>
   </section>
+
+  <!-- 提示 -->
+  <div class="tip-modal">
+    <div class="content">
+     <span>{{isPlaySuccess ? '恭喜成功！' : '失败了！'}}</span>
+    </div>
+  </div>
+  <div id="image-wrapper" style="display: none">
+    <img src="images/mine.bmp" class="img-mine" alt="">
+    <img src="images/error.bmp" class="img-error" alt="">
+    <img src="images/flag.bmp" class="img-flag" alt="">
+    <img src="images/blank.bmp" class="img-blank" alt="">
+    <img src="images/blood.bmp" class="img-blood" alt="">
+    <img src="images/0.bmp" class="img-0" alt="">
+    <img src="images/1.bmp" class="img-1" alt="">
+    <img src="images/2.bmp" class="img-2" alt="">
+    <img src="images/3.bmp" class="img-3" alt="">
+    <img src="images/4.bmp" class="img-4" alt="">
+    <img src="images/5.bmp" class="img-5" alt="">
+    <img src="images/5.bmp" class="img-6" alt="">
+    <img src="images/7.bmp" class="img-7" alt="">
+    <img src="images/8.bmp" class="img-8" alt="">
+  </div>
+
 </div>
 <script type="text/javascript" src="js/model.js"></script>
 <script type="text/javascript" src="js/frame.js"></script>

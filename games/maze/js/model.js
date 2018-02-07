@@ -2,7 +2,7 @@
  * Created by gongyidong on 2018/2/5.
  */
 // 模型层 M行N列的数据
-let MazeData = function (M, N) {
+let Model = function (M, N) {
   const WALL = '#' // 墙
   const ROAD = ' ' // 路
 
@@ -57,7 +57,7 @@ let MazeData = function (M, N) {
 
   // 克隆数据
   this.clone = () => {
-    let d = new MazeData(this.M, this.N)
+    let d = new Model(this.M, this.N)
     for (let i = 0; i < this.M; i++) {
       for (let j = 0; j < this.N; j++) {
         d.maze[i][j] = this.maze[i][j]

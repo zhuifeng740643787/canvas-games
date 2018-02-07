@@ -2,13 +2,13 @@
  * Created by gongyidong on 2018/2/5.
  */
 // 控制层, M行N列的迷宫
-let Controller = function (M, N, wallSize = 10, roadSize = 10, delay = 30) {
-  const BLOCK_SIDE = roadSize // 方格的尺寸
+let Controller = function (M, N, blockSide = 10, delay = 30) {
+  const BLOCK_SIDE = blockSide// 方格的尺寸
   const DELAY = Math.max(parseInt(delay), 5) // 延迟毫秒数
   M = parseInt(M)
   N = parseInt(N)
   // 初始化数据
-  this.data = new MazeData(M, N)
+  this.data = new Model(M, N)
 
   let canvasWidth = N * BLOCK_SIDE
   let canvasHeight = M * BLOCK_SIDE

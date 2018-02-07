@@ -15,13 +15,13 @@ let Frame = function (canvasWidth, canvasHeight) {
 
   // 绘画
   this.draw = (data) => {
-    this.clear()
     this.data = data
-    this._draw()
+    window.requestAnimationFrame(this._draw)
   }
 
   // 具体绘制
   this._draw = () => {
+    this.clear()
     // 计算出每一个格子的宽和高
     let w = parseInt(this.canvas.width / this.data.N)
     let h = parseInt(this.canvas.height / this.data.M)

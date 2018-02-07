@@ -16,8 +16,7 @@ window.onload = function () {
       option: {
         rowNum: 51, // 行数
         colNum: 51, // 列数
-        roadSize: 10, // 路的尺寸
-        wallSize: 10, // 墙的尺寸
+        blockSide: 10, // 方格尺寸
         delay: 20, // 延迟毫秒数
         makeMethod: 1, // 生成迷宫算法
         findPathMethod: 1, // 寻路算法
@@ -25,7 +24,7 @@ window.onload = function () {
     },
     computed: {
       canMake: function() {
-        return this.option.rowNum > 0 && this.option.colNum > 0 && this.option.roadSize > 0 && this.option.wallSize > 0
+        return this.option.rowNum > 0 && this.option.colNum > 0 && this.option.blockSide > 0
       }, // 是否可生成迷宫
       canFindPath: function() {
         return this.controller && !this.controller.isMaking && !this.controller.isSearching
@@ -38,7 +37,7 @@ window.onload = function () {
           this.controller.__destructor__()
           this.controller = null
         }
-        this.controller = new Controller(this.option.rowNum, this.option.colNum, this.option.wallSize, this.option.roadSize, this.option.delay)
+        this.controller = new Controller(this.option.rowNum, this.option.colNum, this.option.blockSide, this.option.delay)
         this.controller.make(this.option.makeMethod)
       },
       // 路径检索
