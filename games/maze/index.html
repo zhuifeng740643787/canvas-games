@@ -103,7 +103,9 @@
         </li>
         <li class="option-item">
           <div class="option-buttons">
-            <button :disabled="!canMake" :class='{"button": true, "active": canMake}' @click="handleMakeMaze">生成迷宫</button>
+            <button :disabled="!canMake" :class='{"button": true, "active": canMake}' @click="handleMakeMaze">
+              {{controller ? '重新生成' : '生成迷宫' }}
+            </button>
             <button :disabled="!canFindPath" :class='{"button": true, "active": canFindPath}' @click="handleFindPath">走迷宫</button>
           </div>
         </li>

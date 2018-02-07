@@ -21,18 +21,6 @@ let Controller = function (M, N, wallSize = 10, roadSize = 10, delay = 30) {
   let setTimeoutRender // 延迟渲染
   let renderInterval // 定时渲染
 
-  let searchPathListener = (e) => {
-    // 检索路径
-    if (e.keyCode == '32') {
-      console.log(e.keyCode, 1)
-      if (this.isMaking || this.isSearching) {
-        return
-      }
-      this.searchPathByBFS(this.data.entryX, this.data.entryY)
-    }
-  }
-  window.addEventListener('keydown', searchPathListener)
-
   // 析构函数
   this.__destructor__ = () => {
     if (!this.data) {
@@ -41,7 +29,6 @@ let Controller = function (M, N, wallSize = 10, roadSize = 10, delay = 30) {
     this.data = null
     this.frame.clear()
     this.frame = null
-    window.removeEventListener('keydown', searchPathListener)
     if (setTimeoutRender) {
       window.clearTimeout(setTimeoutRender)
     }
@@ -94,13 +81,13 @@ let Controller = function (M, N, wallSize = 10, roadSize = 10, delay = 30) {
 
   this.findPath = (method) => {
     this.isSearching = true
+    window.dd = this.data.clone()
     renderSearchPathQueue = new RenderSearchPathQueue(this.data.clone())
     switch (parseInt(method)) {
       case 1:
         this.searchPathByDFSRecursion()
         break
       case 2:
-        console.log(222)
         this.searchPathByDFSNOTRecursion()
         break
       case 3:

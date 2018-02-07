@@ -41,6 +41,10 @@ let Frame = function (canvasWidth, canvasHeight) {
           fillStyle = '#ff0000'
         }
 
+        if (!this.data.isOpen[i][j]) {
+          fillStyle = '#000000'
+        }
+
         this.ctx.fillStyle = fillStyle
         // 绘制方格
         this.ctx.fillRect(j * w, i * h, w, h)
