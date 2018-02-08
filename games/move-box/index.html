@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>移动箱子</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="container" id="app">
+  <!-- 画布区域 -->
+  <section class="canvas-wrapper">
+    <canvas id="ui-layer" class="canvas active" width="500" height="500">
+      您的浏览器不支持canvas,请去升级浏览器。
+    </canvas>
+  </section>
+  <!-- 操作区域 -->
+  <section class="option-wrapper" >
+    <div class="option-card">
+      <header><h2>选项</h2></header>
+      <ul>
+        <li class="option-item">
+          <div class="option-left">
+            <span>选择箱子</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.rowNum">
+              <span class="input-append">行</span>
+            </div>
+            <span class="input-split">X</span>
+            <div class="input-wrapper">
+              <input type="text" v-model="option.colNum">
+              <span class="input-append">列</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>雷的个数</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.mineNum">
+              <span class="input-append">个</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>方格尺寸</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.blockSide">
+              <span class="input-append">px</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-buttons">
+            <button :disabled="!canMake" :class='{"button": true, "active": canMake}' @click="handleMake">
+              {{controller ? '重新生成' : '生成雷区' }}
+            </button>
+            <button :disabled="!canPlay" :class='{"button": true, "active": canPlay}' @click="handlePlay">
+              {{controller ? '重玩' : '开始游戏' }}
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 提示 -->
+  <div class="tip-modal">
+    <div class="content">
+     <span>{{isPlaySuccess ? '恭喜成功！' : '失败了！'}}</span>
+    </div>
+  </div>
+  <div id="image-wrapper" style="display: none">
+    <img src="images/mine.bmp" class="img-mine" alt="">
+    <img src="images/error.bmp" class="img-error" alt="">
+    <img src="images/flag.bmp" class="img-flag" alt="">
+    <img src="images/blank.bmp" class="img-blank" alt="">
+    <img src="images/blood.bmp" class="img-blood" alt="">
+    <img src="images/0.bmp" class="img-0" alt="">
+    <img src="images/1.bmp" class="img-1" alt="">
+    <img src="images/2.bmp" class="img-2" alt="">
+    <img src="images/3.bmp" class="img-3" alt="">
+    <img src="images/4.bmp" class="img-4" alt="">
+    <img src="images/5.bmp" class="img-5" alt="">
+    <img src="images/5.bmp" class="img-6" alt="">
+    <img src="images/7.bmp" class="img-7" alt="">
+    <img src="images/8.bmp" class="img-8" alt="">
+  </div>
+
+</div>
+<script type="text/javascript" src="js/helper.js"></script>
+<script type="text/javascript" src="js/model.js"></script>
+<script type="text/javascript" src="js/frame.js"></script>
+<script type="text/javascript" src="js/controller.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue" defer></script>
+<script type="text/javascript" src="js/main.js" defer></script>
+</body>
+</html>
