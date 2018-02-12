@@ -3,7 +3,7 @@
  洗牌算法
  floodfill算法
  ************************************************/
-
+const EMPTY = '*'
 window.onload = function () {
   var app = new Vue({
     el: '#app',
@@ -17,6 +17,7 @@ window.onload = function () {
       },
       colorBoxes: [], // 箱子
       dragBox: null, // 拖拽对象
+      movedBox: null, // 移动对象
       boxData: [], // 箱子数据,
       answer: [], // 答案
     },
@@ -35,13 +36,13 @@ window.onload = function () {
       }
     },
     methods: {
-      // 获取箱子数据
+      // 初始化箱子数据
       initBoxData: function () {
         let data = new Array()
         for (let i = 0; i < this.option.rowNum; i++) {
           data[i] = new Array()
           for (let j = 0; j < this.option.colNum; j++) {
-            data[i][j] = '*'
+            data[i][j] = EMPTY
           }
         }
         this.boxData = data
@@ -59,7 +60,7 @@ window.onload = function () {
           this.initBoxData()
         }
 
-        this.controller = new Controller(this.option.stepNum, this.boxData)
+        this.controller = new Controller(this.option.stepNum, this.boxData, this.option.blockSide)
       },
       handleClearAndMake: function () {
         if (this.controller) {
@@ -67,7 +68,7 @@ window.onload = function () {
           this.controller = null
         }
         this.initBoxData()
-        this.controller = new Controller(this.option.stepNum, this.boxData)
+        this.controller = new Controller(this.option.stepNum, this.boxData, this.option.blockSide)
       },
       handleFinishMake: function () {
         this.controller.finishMaking()
@@ -91,7 +92,6 @@ window.onload = function () {
       },
       // 拖拽箱子
       dragAndDropBox: function () {
-        let canvas = this.$refs.canvas
         // 拖拽开始
         document.addEventListener("dragstart", (event) => {
           if (!this.isMaking) {
@@ -128,14 +128,66 @@ window.onload = function () {
           this.boxData[x][y] = this.dropBox.target.getAttribute('value')
           this.controller.updateData(this.option.stepNum, this.boxData)
         });
+      },
+      // 移动箱子
+      moveBox: function () {
+        let isEmpty = (x, y) => {
+          return this.isMaking && this.boxData[x][y] == EMPTY
+        }
+
+        let canvas = this.$refs.canvas
+        // 按下鼠标
+        canvas.addEventListener('mousedown', (event) => {
+          let xIndex = parseInt(event.offsetY / this.option.blockSide)
+          let yIndex = parseInt(event.offsetX / this.option.blockSide)
+          if (isEmpty(xIndex, yIndex)) {
+            event.preventDefault()
+            this.movedBox = null
+            return
+          }
+          this.movedBox = {
+            offsetX: event.offsetX,
+            offsetY: event.offsetY,
+          }
+        })
+        // 移动鼠标
+        canvas.addEventListener('mousemove', (event) => {
+          if (!this.movedBox) {
+            event.preventDefault()
+            return
+          }
+        })
+        // 抬起鼠标
+        canvas.addEventListener('mouseup', (event) => {
+          if (!this.movedBox) {
+            event.preventDefault()
+            return
+          }
+          let fromX = parseInt(this.movedBox.offsetY / this.option.blockSide)
+          let fromY = parseInt(this.movedBox.offsetX / this.option.blockSide)
+          let toX = parseInt(event.offsetY / this.option.blockSide)
+          let toY = parseInt(event.offsetX / this.option.blockSide)
+          if (this.isMaking) { // 制作中
+            if (this.boxData[fromX][fromY] == this.boxData[toX][toY]) {
+              return
+            }
+            let tmp = this.boxData[fromX][fromY]
+            this.boxData[fromX][fromY] = this.boxData[toX][toY]
+            this.boxData[toX][toY] = tmp
+            this.controller.updateData(this.option.stepNum, this.boxData)
+          } else { // 游戏中
+            this.controller.move(fromX, fromY, toX, toY)
+          }
+          this.movedBox = null
+        })
       }
 
     },
     mounted: function () {
       this.handleMake()
       this.colorBoxes = helpers.colors
-
       this.dragAndDropBox()
+      this.moveBox()
     }
   })
 

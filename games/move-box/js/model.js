@@ -1,106 +1,13 @@
 /**
  * Created by gongyidong on 2018/2/5.
  */
-// 模型层
-let Model = function (stepNum, boxData) {
-  stepNum = parseInt(stepNum)
-  if (stepNum <= 0) {
-    throw new Error('步数不能为0')
-  }
-
-  if (typeof boxData != 'object' || boxData.length === 0 || boxData[0].length == 0) {
-    throw new Error('箱子区域不能为空')
-  }
-  this.stepNum = stepNum // 步数
-  // 初始化数据
-  this.startBoard = new Board(boxData) // 初始盘面
-  this.M = this.startBoard.M // 行数
-  this.N = this.startBoard.N // 列数
-  this.showBoard = this.startBoard.clone() // 显示盘面
-  this.answer = [] // 答案
-  // 是否在区域内
-  this.inArea = (x, y) => {
-    return x >= 0 && x < this.M && y >= 0 && y < this.N
-  }
-
-  // 求解
-  this.solve = () => {
-    if (this.stepNum < 0) {
-      return false
-    }
-
-    return this._solve(this.startBoard, this.stepNum)
-  }
-
-  // 是否已成功
-  this.isWin = () => {
-    return this.startBoard.isWin()
-  }
-  // 获取答案
-  this.getAnswer = (board) => {
-    // 先打印上一步的
-    let stack = []
-    while (board) {
-      if (board.swapStr) {
-        stack.unshift(board.swapStr)
-      }
-      board = board.prevBoard
-    }
-    this.answer = []
-    while (stack.length > 0) {
-      this.answer.push(stack.shift())
-    }
-  }
-  // 左右下三个方向
-  let dirArr = [[0, -1], [0, 1], [1, 0]]
-  this._solve = (board, stepNum) => {
-    // 判断是否已经赢了
-    if (board.isWin()) {
-      this.getAnswer(board)
-      return true
-    }
-    if (stepNum <= 0) {
-      return false
-    }
-
-    // 递归遍历每一个box
-    for (let x = 0; x < this.M; x++) {
-      for (let y = 0; y < this.N; y++) {
-        if (board.isEmpty(x, y)) {
-          continue
-        }
-        // 向左右下三个方向移动
-        for (let i = 0; i < dirArr.length; i++) {
-          let newX = x + dirArr[i][0]
-          let newY = y + dirArr[i][1]
-          if (!board.inArea(newX, newY)) {
-            continue
-          }
-          let swapStr = `change (${x}, ${y}) and (${newX}, ${newY})`
-          let nextBoard = new Board(board.boxData, board, swapStr)
-          // 移动箱子
-          nextBoard._swap(x, y, newX, newY)
-          // 处理盘面
-          nextBoard._handle()
-          // 下一步递归
-          if (this._solve(nextBoard, stepNum - 1)) {
-            return true
-          }
-        }
-      }
-    }
-    return false
-  }
-
-}
-
-// 盘面
-let Board = function (boxData, prevBoard = null, swapStr = '') {
+// 模型层 (面板)
+let Model =  function (boxData, prevData = null, swapStr = '') {
   const EMPTY = '*'
 
   this.M = boxData.length
   this.N = boxData[0].length
-  this.prevBoard = prevBoard
+  this.prevData = prevData
   this.swapStr = swapStr
 
   this.boxData = new Array()
@@ -129,12 +36,12 @@ let Board = function (boxData, prevBoard = null, swapStr = '') {
 
   // 克隆数据
   this.clone = () => {
-    let d = new Board(this.boxData, this.prevBoard)
+    let d = new Model(this.boxData, this.prevData)
     return d
   }
 
   // 交换box
-  this._swap = (x1, y1, x2, y2) => {
+  this.swap = (x1, y1, x2, y2) => {
     if (x1 == x2 && y1 == y2) {
       return
     }
@@ -161,7 +68,7 @@ let Board = function (boxData, prevBoard = null, swapStr = '') {
           continue
         }
         // 交换cur 与 j对应的box
-        this._swap(i, j, cur, j)
+        this.swap(i, j, cur, j)
         // cur向上移动
         cur--
       }

@@ -20,7 +20,8 @@ let Frame = function (canvasWidth, canvasHeight) {
     this.isMaking = isMaking
   }
   // 绘画
-  this.draw = (data) => {
+  this.draw = (data, isMaking = false) => {
+    this.isMaking = isMaking
     this.clear()
     this.data = data
     this._draw()
@@ -33,12 +34,11 @@ let Frame = function (canvasWidth, canvasHeight) {
     let h = parseInt(this.canvas.height / this.data.M)
 
     // 遍历绘制
-    let board = this.data.showBoard
     for (let x = 0; x < this.data.M; x++) {
       for (let y = 0; y < this.data.N; y++) {
         // 绘制BOX
-        if (!board.isEmpty(x, y) || this.isMaking) {
-          this.drawBox(this.ctx, board, y * w + 1, x * h + 1, w - 2, h - 2, x, y)
+        if (!this.data.isEmpty(x, y) || this.isMaking) {
+          this.drawBox(this.ctx, this.data, y * w + 1, x * h + 1, w - 2, h - 2, x, y)
         }
       }
     }
@@ -48,8 +48,8 @@ let Frame = function (canvasWidth, canvasHeight) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  this.drawBox = (ctx, board, x, y, w, h, xIndex, yIndex) => {
-    let text = board.boxData[xIndex][yIndex]
+  this.drawBox = (ctx, data, x, y, w, h, xIndex, yIndex) => {
+    let text = data.boxData[xIndex][yIndex]
     ctx.save()
     if (this.isMaking) {
       ctx.strokeStyle = '#000000'
@@ -62,7 +62,7 @@ let Frame = function (canvasWidth, canvasHeight) {
       ctx.closePath()
       ctx.stroke()
     }
-    if (board.isEmpty(xIndex, yIndex)) {
+    if (data.isEmpty(xIndex, yIndex)) {
       ctx.fillStyle = 'transparent'
     } else {
       ctx.fillStyle = helpers.colors[text]
@@ -73,7 +73,6 @@ let Frame = function (canvasWidth, canvasHeight) {
       ctx.fillText(text, x + parseInt(w / 2), y + parseInt(h / 3), w / 2)
       ctx.fillText(`(${xIndex}, ${yIndex})`, x + parseInt(w / 2), y + parseInt(h * 2 / 3), w / 2)
     }
-
 
     ctx.restore()
   }

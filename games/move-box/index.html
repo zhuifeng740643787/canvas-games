@@ -64,7 +64,7 @@
           <div class="option-right">
             <ul class="drag-boxes-wrapper" ref="dragBoxZone">
               <li v-for="(color, key) in colorBoxes" :key="key">
-                <div class="drag-box" draggable="true" :value="key" :style="{backgroundColor: color}">
+                <div class="drag-box" draggable="true" :value="key" :style="{backgroundColor: color, width: (option.blockSide - 4) + 'px', height: (option.blockSide - 4) + 'px' }">
                   <span>{{key}}</span>
                 </div>
               </li>
