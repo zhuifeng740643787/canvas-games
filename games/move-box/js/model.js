@@ -47,8 +47,13 @@ let Model =  function (boxData, prevData = null, swapStr = '') {
 
   // 克隆数据
   this.clone = () => {
-    let d = new Model(this.boxData, this.prevData)
-    return d
+    let data = new Model(this.boxData)
+    for (let i = 0; i < this.M; i++) {
+      for (let j = 0; j < this.N; j++) {
+        data.flags[i][j] = this.flags[i][j]
+      }
+    }
+    return data
   }
 
   // 交换box

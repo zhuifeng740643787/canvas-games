@@ -48,12 +48,10 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
     this.renderInteval = window.setInterval((event) => {
       if (this.renderQueue.length == 0) {
         window.clearInterval(this.renderInteval)
-        this.data = this.bakData.clone()
-        this.draw(this.data)
         return
       }
       this.draw(this.renderQueue.shift())
-    }, 1000)
+    }, 100)
   }
 
   // 移动箱子 fromX, fromY, toX, toY 索引坐标
@@ -82,18 +80,13 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
       return
     }
     this.data.swap(fromX, fromY, toX, toY)
-    this.draw(this.data)
+    this._handle(this.data)
+    this.renderSolveProcess()
   }
 
   // 绘制
   this.draw = (data) => {
     this.frame.draw(data, this.isMaking)
-  }
-
-  // 求解
-  this.play = (callback) => {
-    this.solve()
-    callback(this.answer)
   }
 
   this.updateData = (stepNum, boxData) => {
@@ -109,15 +102,27 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
   }
 
   // 求解
-  this.solve = () => {
+  this.searchSolve = (callback) => {
     if (this.stepNum < 0) {
       return false
     }
 
+    // 先处理一下
+    this._handle(this.data)
+    if (this.data.isWin()) {
+      callback(this.answer, '当前关卡初始状态已经为成功')
+      throw new Error('当前关卡初始状态已经为成功')
+    }
     let result = this._solve(this.data, this.stepNum)
-    this.renderSolveProcess()
+    if (result) {
+      this.renderSolveProcess()
+    }
+    callback(this.answer, this.answer.length > 0 ? '成功' : '失败')
     return result
   }
+
+
+
 
   // 获取答案
   this.getAnswer = (data) => {
@@ -181,7 +186,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
           this.renderQueue.push(nextData)
           // 处理盘面
           this._handle(nextData)
-          this.renderQueue.push(nextData)
+          this.renderQueue.push(nextData.clone())
           // 下一步递归
           if (this._solve(nextData, stepNum - 1)) {
             return true
@@ -215,7 +220,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
         cur--
       }
     }
-    this.renderQueue.push(data)
+    this.renderQueue.push(data.clone())
   }
 
   // 处理箱子消除
@@ -247,7 +252,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
     if (!isRemove) {
       return false
     }
-    this.renderQueue.push(data)
+    this.renderQueue.push(data.clone())
 
     // 消除标记的箱子
     for (let x = 0; x < data.M; x++) {
@@ -258,7 +263,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
       }
     }
     data.clearFlags()
-    this.renderQueue.push(data)
+    this.renderQueue.push(data.clone())
     return true
   }
 

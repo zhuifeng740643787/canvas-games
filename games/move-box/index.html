@@ -88,7 +88,7 @@
             <button :disabled="!canMake" :class='{"button": true, "active": canMake}' @click="handleMake">
               {{!isMaking ? '制作关卡' : '完成制作' }}
             </button>
-            <button :disabled="!canPlay" :class='{"button": true, "active": canPlay}' @click="handlePlay">
+            <button :disabled="!canPlay" :class='{"button": true, "active": canPlay}' @click="handleSearchSolve">
               求解
             </button>
             <button :disabled="!canMake" :class='{"button": true, "active": canMake}' @click="handleClearAndMake">

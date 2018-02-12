@@ -64,6 +64,7 @@ let Frame = function (canvasWidth, canvasHeight) {
       ctx.fillStyle = 'transparent'
       return
     }
+
     // 绘制箱子
     ctx.fillStyle = helpers.colors[text]
     ctx.fillRect(x, y, w, h)

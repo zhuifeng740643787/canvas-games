@@ -38,6 +38,10 @@ window.onload = function () {
     methods: {
       // 初始化箱子数据
       initBoxData: function () {
+        if (window.localStorage.getItem('BOX_DATA')) {
+          this.boxData = JSON.parse(window.localStorage.getItem('BOX_DATA'))
+          return
+        }
         let data = new Array()
         for (let i = 0; i < this.option.rowNum; i++) {
           data[i] = new Array()
@@ -62,6 +66,7 @@ window.onload = function () {
 
         this.controller = new Controller(this.option.stepNum, this.boxData, this.option.blockSide)
       },
+      // 重新制作
       handleClearAndMake: function () {
         if (this.controller) {
           this.controller.__destructor__()
@@ -72,23 +77,27 @@ window.onload = function () {
       },
       handleFinishMake: function () {
         this.controller.finishMaking()
+
+        window.localStorage.setItem('BOX_DATA', JSON.stringify(this.boxData))
       },
       // 重玩
-      handlePlay: function () {
+      handleSearchSolve: function () {
         if (!this.controller || this.controller.isMaking) {
           return
         }
         this.answer = []
-        this.controller.play(this.playCallback)
+        this.controller.searchSolve(this.solveCallback)
       },
       // 成功或失败的回调
-      playCallback: function (answer) {
+      solveCallback: function (answer, message) {
         this.answer = answer
         document.querySelector('.tip-modal').classList.add('show')
+        if (message) {
+          document.querySelector('.tip-modal span').textContent = message
+        }
         setTimeout(() => {
           document.querySelector('.tip-modal').classList.remove('show')
         }, 3000)
-        console.log(this.answer)
       },
       // 拖拽箱子
       dragAndDropBox: function () {
@@ -167,13 +176,19 @@ window.onload = function () {
           let fromY = parseInt(this.movedBox.offsetX / this.option.blockSide)
           let toX = parseInt(event.offsetY / this.option.blockSide)
           let toY = parseInt(event.offsetX / this.option.blockSide)
+          console.log(event)
           if (this.isMaking) { // 制作中
             if (this.boxData[fromX][fromY] == this.boxData[toX][toY]) {
               return
             }
-            let tmp = this.boxData[fromX][fromY]
-            this.boxData[fromX][fromY] = this.boxData[toX][toY]
-            this.boxData[toX][toY] = tmp
+            // 按下alt表示复制, 否则为交换
+            if (event.altKey) {
+              this.boxData[toX][toY] = this.boxData[fromX][fromY]
+            } else {
+              let tmp = this.boxData[fromX][fromY]
+              this.boxData[fromX][fromY] = this.boxData[toX][toY]
+              this.boxData[toX][toY] = tmp
+            }
             this.controller.updateData(this.option.stepNum, this.boxData)
           } else { // 游戏中
             this.controller.move(fromX, fromY, toX, toY)
