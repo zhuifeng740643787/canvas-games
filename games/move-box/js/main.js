@@ -4,95 +4,138 @@
  floodfill算法
  ************************************************/
 
-
 window.onload = function () {
   var app = new Vue({
     el: '#app',
     data: {
       controller: null,
       option: {
-        rowNum: 20, // 行数
-        colNum: 20, // 列数
-        mineNum: 20, // 雷的个数
-        blockSide: 25, // 方格尺寸
+        rowNum: 10, // 行数
+        colNum: 7, // 列数
+        stepNum: 1, // 雷的个数
+        blockSide: 50, // 方格尺寸
       },
-      boxData: { // 箱子的数据
-        stepNum: 1, // 步数
-        data: [], // 数据
-        M: 0, // 行数
-        N: 0, // 列数
-      }
+      colorBoxes: [], // 箱子
+      dragBox: null, // 拖拽对象
+      boxData: [], // 箱子数据,
+      answer: [], // 答案
     },
     computed: {
       canMake: function () {
-        return this.option.rowNum > 0 && this.option.colNum > 0 && this.option.blockSide > 0 && this.option.mineNum > 0
-      }, // 是否可生成雷区
+        return this.option.rowNum > 0 && this.option.colNum > 0 && this.option.blockSide > 0 && this.option.stepNum > 0
+      }, // 是否可制作关卡
+      isMaking: function () {
+        return this.controller && this.controller.isMaking
+      },
       canPlay: function () {
         return this.controller && !this.controller.isMaking
       },
       isPlaySuccess: function () {
-        return this.controller ? this.controller.playSuccess : false
+        return this.answer.length > 0
       }
     },
     methods: {
-      // 读取文件内容
-      _readTextFile: function (file) {
-        let rawFile = new XMLHttpRequest();
-        rawFile.open("GET", file, true);
-        rawFile.onreadystatechange = () => {
-          if (rawFile.readyState === 4) {
-            if (rawFile.status === 200 || rawFile.status == 0) {
-              let arr = rawFile.responseText.split("\n")
-              if (arr.length <= 1) {
-                throw new Error('数据有误')
-              }
-              this.boxData.stepNum = parseInt(arr[0])
-              this.boxData.M = arr.length - 1
-              this.boxData.N = arr[1].length
-              for (let i = 1; i < arr.length; i++) {
-                if (arr[i].length !== this.boxData.N) {
-                  throw new Error('列数不一致')
-                }
-                this.boxData.data.push(arr[i].split(''))
-              }
-              if (this.controller) {
-                this.controller.__destructor__()
-                this.controller = null
-              }
-              this.controller = new Controller(this.boxData.stepNum, this.boxData.data)
-              this.controller.make()
-            }
+      // 获取箱子数据
+      initBoxData: function () {
+        let data = new Array()
+        for (let i = 0; i < this.option.rowNum; i++) {
+          data[i] = new Array()
+          for (let j = 0; j < this.option.colNum; j++) {
+            data[i][j] = '*'
           }
         }
-        rawFile.send(null);
+        this.boxData = data
       },
+
       // 生成
       handleMake: function () {
-        // 读取文件
-        this._readTextFile('./level_01.txt')
+        if (this.isMaking) {
+          this.handleFinishMake()
+          return
+        }
+
+        // 开始制作
+        if (!this.controller) {
+          this.initBoxData()
+        }
+
+        this.controller = new Controller(this.option.stepNum, this.boxData)
+      },
+      handleClearAndMake: function () {
+        if (this.controller) {
+          this.controller.__destructor__()
+          this.controller = null
+        }
+        this.initBoxData()
+        this.controller = new Controller(this.option.stepNum, this.boxData)
+      },
+      handleFinishMake: function () {
+        this.controller.finishMaking()
       },
       // 重玩
       handlePlay: function () {
         if (!this.controller || this.controller.isMaking) {
           return
         }
-        this.controller.play()
+        this.answer = []
+        this.controller.play(this.playCallback)
       },
       // 成功或失败的回调
-      palyCallback: function (isSuccess) {
-        if (isSuccess) {
-          document.querySelector('.tip-modal').classList.add('show', 'haha')
-        } else {
-          document.querySelector('.tip-modal').classList.add('show', 'asdjlak')
-        }
+      playCallback: function (answer) {
+        this.answer = answer
+        document.querySelector('.tip-modal').classList.add('show')
         setTimeout(() => {
           document.querySelector('.tip-modal').classList.remove('show')
         }, 3000)
+        console.log(this.answer)
+      },
+      // 拖拽箱子
+      dragAndDropBox: function () {
+        let canvas = this.$refs.canvas
+        // 拖拽开始
+        document.addEventListener("dragstart", (event) => {
+          if (!this.isMaking) {
+            event.preventDefault()
+            return
+          }
+          if (!event.target.classList.contains('drag-box')) {
+            this.dropBox = null
+            return
+          }
+          this.dropBox = {
+            target: event.target,
+            offsetX: event.offsetX,
+            offsetY: event.offsetY,
+          }
+        });
+        // 必须要写，需要禁用默认事件
+        document.addEventListener("dragover", (event) => {
+          event.preventDefault();
+        }, false);
+        // 拖拽结束
+        document.addEventListener("drop", (event) => {
+          if (!this.isMaking) {
+            return
+          }
+          event.preventDefault();
+          if (!this.dropBox || event.target.id != 'ui-layer') {
+            return
+          }
+          // 设置数据
+          // 使用offsetX, offsetY
+          let x = parseInt((event.offsetY - this.dropBox.offsetY + this.option.blockSide / 2) / this.option.blockSide)
+          let y = parseInt((event.offsetX - this.dropBox.offsetX + this.option.blockSide / 2) / this.option.blockSide)
+          this.boxData[x][y] = this.dropBox.target.getAttribute('value')
+          this.controller.updateData(this.option.stepNum, this.boxData)
+        });
       }
 
     },
     mounted: function () {
       this.handleMake()
+      this.colorBoxes = helpers.colors
+
+      this.dragAndDropBox()
     }
   })
 
