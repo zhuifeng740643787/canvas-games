@@ -4,6 +4,7 @@
  floodfill算法
  ************************************************/
 const EMPTY = '*'
+const STORAGE_BOX_DATA_KEY = 'BOX_DATA'
 window.onload = function () {
   var app = new Vue({
     el: '#app',
@@ -38,8 +39,8 @@ window.onload = function () {
     methods: {
       // 初始化箱子数据
       initBoxData: function () {
-        if (window.localStorage.getItem('BOX_DATA')) {
-          this.boxData = JSON.parse(window.localStorage.getItem('BOX_DATA'))
+        if (window.localStorage.getItem(STORAGE_BOX_DATA_KEY)) {
+          this.boxData = JSON.parse(window.localStorage.getItem(STORAGE_BOX_DATA_KEY))
           return
         }
         let data = new Array()
@@ -72,13 +73,14 @@ window.onload = function () {
           this.controller.__destructor__()
           this.controller = null
         }
+        window.localStorage.removeItem(STORAGE_BOX_DATA_KEY)
         this.initBoxData()
         this.controller = new Controller(this.option.stepNum, this.boxData, this.option.blockSide)
       },
       handleFinishMake: function () {
         this.controller.finishMaking()
 
-        window.localStorage.setItem('BOX_DATA', JSON.stringify(this.boxData))
+        window.localStorage.setItem(STORAGE_BOX_DATA_KEY, JSON.stringify(this.boxData))
       },
       // 重玩
       handleSearchSolve: function () {
@@ -176,7 +178,6 @@ window.onload = function () {
           let fromY = parseInt(this.movedBox.offsetX / this.option.blockSide)
           let toX = parseInt(event.offsetY / this.option.blockSide)
           let toY = parseInt(event.offsetX / this.option.blockSide)
-          console.log(event)
           if (this.isMaking) { // 制作中
             if (this.boxData[fromX][fromY] == this.boxData[toX][toY]) {
               return
