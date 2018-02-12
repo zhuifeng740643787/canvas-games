@@ -56,8 +56,6 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
     }, 1000)
   }
 
-
-
   // 移动箱子 fromX, fromY, toX, toY 索引坐标
   this.move = (fromX, fromY, toX, toY) => {
     if (this.data.boxData[fromX][fromY] == this.data.boxData[fromY][toY]) {
@@ -136,8 +134,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
       this.answer.push(stack.shift())
     }
   }
-  // 左右下三个方向
-  let dirArr = [[0, -1], [0, 1], [1, 0]]
+
   this._solve = (data, stepNum) => {
     // 判断是否已经赢了
     if (data.isWin()) {
@@ -148,17 +145,33 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
       return false
     }
 
+    // 判断是否还能赢
+    if (!data.canWin()) {
+      return false
+    }
+
     // 递归遍历每一个box
     for (let x = 0; x < data.M; x++) {
       for (let y = 0; y < data.N; y++) {
         if (data.isEmpty(x, y)) {
           continue
         }
-        // 向左右下三个方向移动
+
+        // 减支，如果右边有箱子，当前箱子就不再右移了, 因为当前箱子右移跟右边箱子左移是一样的
+        let dirArr = [[0, -1], [0, 1], [1, 0]] // 左右下三个方向
+        let rightX = x, rightY = y + 1
+        if (data.inArea(rightX, rightY) && !data.isEmpty(rightX, rightY)) {
+          dirArr = [[0, -1], [1, 0]] // 左下两个方向
+        }
+        // 移动箱子
         for (let i = 0; i < dirArr.length; i++) {
           let newX = x + dirArr[i][0]
           let newY = y + dirArr[i][1]
           if (!data.inArea(newX, newY)) {
+            continue
+          }
+          // 如果两个箱子相同，就不再遍历了
+          if (data.boxData[x][y] == data.boxData[newX][newY]) {
             continue
           }
           let swapStr = `change (${x}, ${y}) and (${newX}, ${newY})`
@@ -167,7 +180,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
           nextData.swap(x, y, newX, newY)
           this.renderQueue.push(nextData)
           // 处理盘面
-          nextData._handle()
+          this._handle(nextData)
           this.renderQueue.push(nextData)
           // 下一步递归
           if (this._solve(nextData, stepNum - 1)) {
@@ -179,8 +192,75 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
     return false
   }
 
+  // 处理盘面
+  this._handle = (data) => {
+    // 处理箱子掉落和消除
+    do {
+      this._drop(data)
+    } while (this._remove(data))
+  }
 
+  // 处理箱子掉落
+  this._drop = (data) => {
+    // 处理N列
+    for (let j = 0; j < data.N; j++) {
+      let cur = data.M - 1 // cur 当前要放box的位置，i为由下到上要遍历的box
+      for (let i = data.M - 1; i >= 0; i--) {
+        if (data.boxData[i][j] == EMPTY) {
+          continue
+        }
+        // 交换cur 与 j对应的box
+        data.swap(i, j, cur, j)
+        // cur向上移动
+        cur--
+      }
+    }
+    this.renderQueue.push(data)
+  }
 
+  // 处理箱子消除
+  this._remove = (data) => {
+    // 对要消除的box先进行标记
+    let isRemove = false
+    for (let x = 0; x < data.M; x++) {
+      for (let y = 0; y < data.N; y++) {
+        if (data.boxData[x][y] == EMPTY) {
+          continue
+        }
+        // 向右和向下看是否有三个一样的box
+        let dirs = [[0, 1], [1, 0]]
+        for (let i = 0; i < dirs.length; i++) {
+          let x2 = x + dirs[i][0]
+          let y2 = y + dirs[i][1]
+          let x3 = x + dirs[i][0] * 2
+          let y3 = y + dirs[i][1] * 2
+          if (data.inArea(x2, y2) && data.inArea(x3, y3)
+            && data.boxData[x2][y2] === data.boxData[x][y] && data.boxData[x3][y3] === data.boxData[x][y]) {
+            data.flags[x][y] = true
+            data.flags[x2][y2] = true
+            data.flags[x3][y3] = true
+            isRemove = true
+          }
+        }
+      }
+    }
+    if (!isRemove) {
+      return false
+    }
+    this.renderQueue.push(data)
+
+    // 消除标记的箱子
+    for (let x = 0; x < data.M; x++) {
+      for (let y = 0; y < data.N; y++) {
+        if (data.flags[x][y]) {
+          data.boxData[x][y] = EMPTY
+        }
+      }
+    }
+    data.clearFlags()
+    this.renderQueue.push(data)
+    return true
+  }
 
   this.draw(this.data)
 }
