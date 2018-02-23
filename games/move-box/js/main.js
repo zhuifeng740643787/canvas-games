@@ -115,6 +115,8 @@ window.onload = function () {
       dragAndDropBox: function () {
         // 拖拽开始
         document.addEventListener("dragstart", (event) => {
+          // 兼容firefox
+          event.dataTransfer.setData('text/plain', null)
           if (!this.isMaking) {
             event.preventDefault()
             return
