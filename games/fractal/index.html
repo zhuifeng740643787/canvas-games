@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>分形图</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="container" id="app">
+  <!-- 画布区域 -->
+  <section class="canvas-wrapper">
+    <canvas id="ui-layer" class="canvas active" width="400" height="400">
+      您的浏览器不支持canvas,请去升级浏览器。
+    </canvas>
+  </section>
+  <!-- 操作区域 -->
+  <section class="option-wrapper">
+    <div class="option-card">
+      <header><h2>选项</h2></header>
+      <ul>
+        <li class="option-item">
+          <div class="option-left">
+            <span>画布大小</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.width">
+              <span class="input-append">px</span>
+            </div>
+            <span class="input-split">X</span>
+            <div class="input-wrapper">
+              <input type="text" v-model="option.height">
+              <span class="input-append">px</span>
+            </div>
+          </div>
+        </li>
+        <li :class="{'option-item': true, 'hide': option.method == 1}">
+          <div class="option-left">
+            <span>递归深度</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.depth">
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>延迟毫秒数</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+              <input type="text" v-model="option.delay">
+              <span class="input-append">毫秒</span>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-left">
+            <span>分形图</span>
+          </div>
+          <div class="option-right">
+            <div class="input-wrapper">
+            <select v-model="option.method">
+              <option value="1">同心圆</option>
+              <option value="2">Vicsek分形</option>
+            </select>
+            </div>
+          </div>
+        </li>
+        <li class="option-item">
+          <div class="option-buttons">
+            <button :disabled="!canDraw" :class='{"button": true, "active": canDraw}' @click="handleDraw">
+              {{controller ? '重新绘制' : '绘制' }}
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>
+<script type="text/javascript" src="js/models/circle.js"></script>
+<script type="text/javascript" src="js/frames/circle.js"></script>
+<script type="text/javascript" src="js/models/vicsek.js"></script>
+<script type="text/javascript" src="js/frames/vicsek.js"></script>
+<script type="text/javascript" src="js/controller.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue" defer></script>
+<script type="text/javascript" src="js/main.js" defer></script>
+</body>
+</html>
