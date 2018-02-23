@@ -5,6 +5,7 @@
  ************************************************/
 const EMPTY = '*'
 const STORAGE_BOX_DATA_KEY = 'BOX_DATA'
+const STORAGE_OPTION_KEY = 'OPTION_DATA'
 window.onload = function () {
   var app = new Vue({
     el: '#app',
@@ -39,6 +40,9 @@ window.onload = function () {
     methods: {
       // 初始化箱子数据
       initBoxData: function () {
+        if (window.localStorage.getItem(STORAGE_OPTION_KEY)) {
+          this.option = JSON.parse(window.localStorage.getItem(STORAGE_OPTION_KEY))
+        }
         if (window.localStorage.getItem(STORAGE_BOX_DATA_KEY)) {
           this.boxData = JSON.parse(window.localStorage.getItem(STORAGE_BOX_DATA_KEY))
           return
@@ -73,13 +77,14 @@ window.onload = function () {
           this.controller.__destructor__()
           this.controller = null
         }
+        window.localStorage.removeItem(STORAGE_OPTION_KEY)
         window.localStorage.removeItem(STORAGE_BOX_DATA_KEY)
         this.initBoxData()
         this.controller = new Controller(this.option.stepNum, this.boxData, this.option.blockSide)
       },
       handleFinishMake: function () {
         this.controller.finishMaking()
-
+        window.localStorage.setItem(STORAGE_OPTION_KEY, JSON.stringify(this.option))
         window.localStorage.setItem(STORAGE_BOX_DATA_KEY, JSON.stringify(this.boxData))
       },
       // 重玩

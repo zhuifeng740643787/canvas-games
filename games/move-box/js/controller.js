@@ -183,10 +183,10 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
           let nextData = new Model(data.boxData, data, swapStr)
           // 移动箱子
           nextData.swap(x, y, newX, newY)
-          this.renderQueue.push(nextData)
+          // this.renderQueue.push(nextData)
           // 处理盘面
           this._handle(nextData)
-          this.renderQueue.push(nextData.clone())
+          // this.renderQueue.push(nextData.clone())
           // 下一步递归
           if (this._solve(nextData, stepNum - 1)) {
             return true
@@ -220,7 +220,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
         cur--
       }
     }
-    this.renderQueue.push(data.clone())
+    // this.renderQueue.push(data.clone())
   }
 
   // 处理箱子消除
@@ -252,7 +252,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
     if (!isRemove) {
       return false
     }
-    this.renderQueue.push(data.clone())
+    // this.renderQueue.push(data.clone())
 
     // 消除标记的箱子
     for (let x = 0; x < data.M; x++) {
@@ -263,7 +263,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
       }
     }
     data.clearFlags()
-    this.renderQueue.push(data.clone())
+    // this.renderQueue.push(data.clone())
     return true
   }
 
