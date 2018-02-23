@@ -21,6 +21,7 @@ let Controller = function (M, N, blockSide = 10, delay = 30) {
   let setTimeoutRender // 延迟渲染
   let renderInterval // 定时渲染
 
+  this.isPausedRender = false // 是否暂停渲染
   // 析构函数
   this.__destructor__ = () => {
     if (!this.data) {
@@ -374,6 +375,11 @@ let Controller = function (M, N, blockSide = 10, delay = 30) {
   // 定时渲染(生成迷宫)
   this.render = () => {
     renderInterval = window.setInterval(() => {
+      // 判断是否为暂停
+      if (this.isPausedRender) {
+        return
+      }
+      // 渲染队列是否为空
       if (renderQueue.isEmpty()) {
         window.clearInterval(renderInterval)
         this.isMaking = false
@@ -387,6 +393,11 @@ let Controller = function (M, N, blockSide = 10, delay = 30) {
   // 检索迷宫路径
   this.renderSearchPath = () => {
     renderInterval = window.setInterval(() => {
+      // 判断是否为暂停
+      if (this.isPausedRender) {
+        return
+      }
+      // 渲染队列是否为空
       if (renderSearchPathQueue.isEmpty()) {
         this.isSearching = false
         window.clearInterval(renderInterval)

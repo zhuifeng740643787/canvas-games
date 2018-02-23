@@ -23,16 +23,16 @@ window.onload = function () {
       }
     },
     computed: {
-      canMake: function() {
+      canMake: function () {
         return this.option.rowNum > 0 && this.option.colNum > 0 && this.option.blockSide > 0
       }, // 是否可生成迷宫
-      canFindPath: function() {
+      canFindPath: function () {
         return this.controller && !this.controller.isMaking && !this.controller.isSearching
       }, // 是否可寻找路径
     },
     methods: {
       // 生成迷宫
-      handleMakeMaze: function() {
+      handleMakeMaze: function () {
         if (this.controller) {
           this.controller.__destructor__()
           this.controller = null
@@ -41,10 +41,19 @@ window.onload = function () {
         this.controller.make(this.option.makeMethod)
       },
       // 路径检索
-      handleFindPath: function() {
+      handleFindPath: function () {
         this.controller.clearPath()
         this.controller.findPath(this.option.findPathMethod)
       }
+    },
+    mounted: function () {
+      // 添加键盘事件
+      window.addEventListener('keyup', (event) => {
+        // 按下空格键，暂停 / 继续
+        if (event.keyCode == 32 && this.controller) {
+          this.controller.isPausedRender = !this.controller.isPausedRender
+        }
+      })
     }
   })
 
