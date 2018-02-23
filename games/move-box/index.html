@@ -94,6 +94,9 @@
             <button :disabled="!canMake" :class='{"button": true, "active": canMake}' @click="handleClearAndMake">
               重新制作
             </button>
+            <button :disabled="!canPlay" :class='{"button": true, "active": canPlay}' @click="handleStartPlay">
+              试玩游戏
+            </button>
           </div>
         </li>
       </ul>

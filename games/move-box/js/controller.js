@@ -2,6 +2,10 @@
  * Created by gongyidong on 2018/2/5.
  */
 
+const MODE_INIT = 0 // 初始化
+const MODE_MAKING = 1 // 制作中
+const MODE_PLAYING = 2  // 游戏中
+
 // 控制层, M行N列
 let Controller = function (stepNum, boxData, blockSide = 50) {
   stepNum = parseInt(stepNum)
@@ -24,7 +28,16 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
   let canvasWidth = this.N * blockSide
   let canvasHeight = this.M * blockSide
   this.frame = new Frame(canvasWidth, canvasHeight)
-  this.isMaking = true // 是否在制作关卡中
+
+  this.mode = MODE_MAKING
+  // 是否在制作关卡中
+  this.isMaking = () => {
+    return this.mode === MODE_MAKING
+  }
+  // 是否在试玩中
+  this.isPlaying = () => {
+    return this.mode === MODE_PLAYING
+  }
   this.renderQueue = [] // 渲染队列
   this.renderInteval = null
 
@@ -51,7 +64,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
         return
       }
       this.draw(this.renderQueue.shift())
-    }, 100)
+    }, 300)
   }
 
   // 移动箱子 fromX, fromY, toX, toY 索引坐标
@@ -86,7 +99,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
 
   // 绘制
   this.draw = (data) => {
-    this.frame.draw(data, this.isMaking)
+    this.frame.draw(data, this.isMaking())
   }
 
   this.updateData = (stepNum, boxData) => {
@@ -97,7 +110,7 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
   }
 
   this.finishMaking = () => {
-    this.isMaking = false
+    this.mode = MODE_INIT
     this.draw(this.data)
   }
 
@@ -122,7 +135,10 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
   }
 
 
-
+  // 试玩
+  this.startPlay = () => {
+    this.mode = MODE_PLAYING
+  }
 
   // 获取答案
   this.getAnswer = (data) => {
@@ -220,7 +236,9 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
         cur--
       }
     }
-    // this.renderQueue.push(data.clone())
+    if (this.isPlaying()) {
+      this.renderQueue.push(data.clone())
+    }
   }
 
   // 处理箱子消除
@@ -252,7 +270,9 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
     if (!isRemove) {
       return false
     }
-    // this.renderQueue.push(data.clone())
+    if (this.isPlaying()) {
+      this.renderQueue.push(data.clone())
+    }
 
     // 消除标记的箱子
     for (let x = 0; x < data.M; x++) {
@@ -263,7 +283,9 @@ let Controller = function (stepNum, boxData, blockSide = 50) {
       }
     }
     data.clearFlags()
-    // this.renderQueue.push(data.clone())
+    if (this.isPlaying()) {
+      this.renderQueue.push(data.clone())
+    }
     return true
   }
 

@@ -28,10 +28,10 @@ window.onload = function () {
         return this.option.rowNum > 0 && this.option.colNum > 0 && this.option.blockSide > 0 && this.option.stepNum > 0
       }, // 是否可制作关卡
       isMaking: function () {
-        return this.controller && this.controller.isMaking
+        return this.controller && this.controller.isMaking()
       },
       canPlay: function () {
-        return this.controller && !this.controller.isMaking
+        return this.controller && !this.controller.isMaking()
       },
       isPlaySuccess: function () {
         return this.answer.length > 0
@@ -83,13 +83,14 @@ window.onload = function () {
         this.controller = new Controller(this.option.stepNum, this.boxData, this.option.blockSide)
       },
       handleFinishMake: function () {
+        this.controller.stepNum = this.option.stepNum
         this.controller.finishMaking()
         window.localStorage.setItem(STORAGE_OPTION_KEY, JSON.stringify(this.option))
         window.localStorage.setItem(STORAGE_BOX_DATA_KEY, JSON.stringify(this.boxData))
       },
       // 重玩
       handleSearchSolve: function () {
-        if (!this.controller || this.controller.isMaking) {
+        if (!this.controller || this.controller.isMaking()) {
           return
         }
         this.answer = []
@@ -105,6 +106,10 @@ window.onload = function () {
         setTimeout(() => {
           document.querySelector('.tip-modal').classList.remove('show')
         }, 3000)
+      },
+      // 试玩游戏
+      handleStartPlay: function() {
+        this.controller.startPlay()
       },
       // 拖拽箱子
       dragAndDropBox: function () {
