@@ -23,7 +23,7 @@ let VicsekFrame = function (canvasWidth, canvasHeight) {
   this._draw = () => {
     this.clear()
     this.ctx.fillStyle = '#ff0000'
-    this._drawVicsek(0, 0, this.canvas.width, this.canvas.height, 0)
+    this._drawVicsek(0, 0, this.canvas.width, this.canvas.height, 1)
   }
 
   /**
