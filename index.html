@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>算法可视化</title>
+  <style>
+    *, *:before, *:after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+
+    ul, ol, li {
+      list-style: none;
+    }
+    a {
+      text-decoration: none;
+    }
+    body {
+      background: -prefix-linear-zgradient(top, #00ff11, #ffff88);
+      background: linear-gradient(to bottom, #0000ff, #ffffff);
+    }
+
+    .container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .option-wrapper {
+      background: -prefix-linear-zgradient(left, #ff2211, #00dddd);
+      background: linear-gradient(to right, #ff2211, #00dddd);
+      min-width: 50%;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 10px 10px 5px #888888;
+    }
+    .option-wrapper .item {
+      text-align: center;
+      height: 50px;
+      line-height: 50px;
+      border-bottom: 1px solid #cccccc;
+    }
+    .option-wrapper .item:last-child {
+      border-bottom: none;
+    }
+    .option-wrapper .item a {
+      font-size: 20px;
+      color: #ffffff;
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <ul class="option-wrapper">
+    <li class="item"><a href="/games/maze/index.html">走迷宫</a></li>
+    <li class="item"><a href="/games/mine-sweeping/index.html">扫雷</a></li>
+    <li class="item"><a href="/games/move-box/index.html">移动箱子</a></li>
+    <li class="item"><a href="/games/fractal/index.html">分形图</a></li>
+  </ul>
+</div>
+
+</body>
+</html>
